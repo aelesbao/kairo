@@ -1,0 +1,14 @@
+[workspace]
+resolver = "3"
+members = ["kiro"]
+
+[workspace.package]
+version = "0.0.1"
+authors = ["Augusto Elesbão <aelesbao@gmail.com>"]
+edition = "2024"
+repository = "https://github.com/aelesbao/kiro"
+homepage = "https://github.com/aelesbao/kiro"
+license = "Apache-2.0"
+readme = "README.md"
+categories = ["command-line-utilities"]
+keywords = ["freedesktop", "desktop", "cli"]

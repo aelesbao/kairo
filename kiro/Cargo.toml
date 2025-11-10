@@ -1,0 +1,15 @@
+[package]
+name = "kiro"
+description = "CLI and Desktop application for smart URL routing"
+
+version.workspace = true
+authors.workspace = true
+edition.workspace = true
+repository.workspace = true
+homepage.workspace = true
+license.workspace = true
+readme.workspace = true
+categories.workspace = true
+keywords.workspace = true
+
+[dependencies]
