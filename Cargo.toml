@@ -1,6 +1,6 @@
 [workspace]
 resolver = "3"
-members = ["kiro"]
+members = ["kiro", "mime"]
 
 [workspace.package]
 version = "0.0.1"
@@ -12,3 +12,7 @@ license = "Apache-2.0"
 readme = "README.md"
 categories = ["command-line-utilities"]
 keywords = ["freedesktop", "desktop", "cli"]
+
+[workspace.dependencies]
+cosmic-mime-apps = { path = "mime" }
+mime = "0.3.17"
