@@ -15,7 +15,10 @@ keywords.workspace = true
 [dependencies]
 anyhow = { version = "1.0.100", features = ["backtrace"] }
 clap = { version = "4.5.51", features = ["derive"] }
+console = "0.16.1"
 cosmic-mime-apps = { workspace = true }
+dialoguer = "0.12.0"
+freedesktop-desktop-entry = { workspace = true }
 mime = { workspace = true }
 thiserror = "2.0.17"
 url = "2.5.7"

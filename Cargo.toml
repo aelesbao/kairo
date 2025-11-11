@@ -15,4 +15,5 @@ keywords = ["freedesktop", "desktop", "cli"]
 
 [workspace.dependencies]
 cosmic-mime-apps = { path = "mime" }
+freedesktop-desktop-entry = "0.7.19"
 mime = "0.3.17"
