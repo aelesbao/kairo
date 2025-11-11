@@ -12,6 +12,7 @@ pub fn handlers_for_scheme(scheme: &str) -> KiroResult<Vec<Arc<App>>> {
         .as_str()
         .parse::<Mime>()?;
 
+    // TODO: find workaround for testing
     let assocs = cosmic_mime_apps::associations::by_app();
     let apps = assocs
         .into_values()
