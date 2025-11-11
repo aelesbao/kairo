@@ -13,3 +13,5 @@ categories.workspace = true
 keywords.workspace = true
 
 [dependencies]
+cosmic-mime-apps = { workspace = true }
+mime = { workspace = true }

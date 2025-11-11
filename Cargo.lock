@@ -92,6 +92,10 @@ dependencies = [
 [[package]]
 name = "kiro"
 version = "0.0.1"
+dependencies = [
+ "cosmic-mime-apps",
+ "mime",
+]
 
 [[package]]
 name = "lazy_static"
