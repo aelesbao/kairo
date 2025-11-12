@@ -1,4 +1,4 @@
-# Kiro: smart link routing
+# Kiro: smart URL routing
 
 Kiro is a tool that helps you open links in your preferred app in a smart and flexible way. It's built for people who use different browsers or browser profiles to separate work, personal, and development tasks, giving you full control over where each link goes.
 

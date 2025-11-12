@@ -6,6 +6,7 @@ use url::Url;
 
 use crate::{Error, Result};
 
+/// Represents an application that can handle specific URL schemes.
 #[derive(Clone, Debug)]
 pub struct App {
     pub appid: Box<str>,
@@ -15,6 +16,7 @@ pub struct App {
 }
 
 impl App {
+    /// Opens the given URL with this application.
     pub fn open_url(&self, url: Url) -> Result<u32> {
         let entry = fde::DesktopEntry::from_path::<&str>(self.path.clone(), None)?;
         let locales = fde::get_languages_from_env();
@@ -30,6 +32,7 @@ impl App {
         Ok(program.id())
     }
 
+    /// Retrieves all applications that can handle the specified URL scheme.
     pub fn handlers_for_scheme(scheme: &str) -> Result<Vec<Self>> {
         let scheme_handler_mime = format!("x-scheme-handler/{}", scheme)
             .as_str()
