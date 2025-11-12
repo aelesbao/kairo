@@ -1,8 +1,6 @@
-[workspace]
-resolver = "3"
-members = ["kiro", "mime"]
-
-[workspace.package]
+[package]
+name = "kiro"
+description = "CLI and Desktop application for smart URL routing"
 version = "0.0.1"
 authors = ["Augusto Elesbão <aelesbao@gmail.com>"]
 edition = "2024"
@@ -13,6 +11,12 @@ readme = "README.md"
 categories = ["command-line-utilities"]
 keywords = ["freedesktop", "desktop", "cli"]
 
-[workspace.dependencies]
-cosmic-mime-apps = { path = "mime" }
+[dependencies]
+anyhow = { version = "1.0.100", features = ["backtrace"] }
+clap = { version = "4.5.51", features = ["derive"] }
+console = "0.16.1"
+dialoguer = "0.12.0"
+freedesktop-desktop-entry = "0.7.19"
 mime = "0.3.17"
+thiserror = "2.0.17"
+url = "2.5.7"
