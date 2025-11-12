@@ -1,7 +1,7 @@
 use std::path::Path;
 
 #[derive(thiserror::Error, Debug)]
-pub enum KiroError {
+pub enum Error {
     #[error("failed to convert scheme to MIME type: {0}")]
     MimeFromStrError(#[from] mime::FromStrError),
 

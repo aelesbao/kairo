@@ -1,7 +1,7 @@
 use clap::{Parser, Subcommand};
 use console::style;
 use dialoguer::{Select, theme::ColorfulTheme};
-use kiro::{App, KiroResult};
+use kiro::{App, Result};
 
 /// Kiro
 #[derive(Parser, Debug)]
@@ -37,7 +37,7 @@ enum Commands {
     },
 }
 
-fn main() -> KiroResult<()> {
+fn main() -> Result<()> {
     let args = Args::parse();
 
     match args.command {
