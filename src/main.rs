@@ -68,13 +68,20 @@ fn main() -> Result<()> {
 
             let selection = Select::with_theme(&ColorfulTheme::default())
                 .with_prompt("Select an application to open the URL with")
+                .report(false)
                 // TODO: save the last used app as default
                 .default(0)
                 .items(&app_names)
-                .interact()
+                .interact_opt()
                 .unwrap();
 
-            apps[selection].open_url(url)?;
+            if let Some(selection) = selection {
+                println!(
+                    "Opening URL with {}...",
+                    style(&apps[selection].name).bold().green()
+                );
+                apps[selection].open_url(url)?;
+            }
         }
     }
 
