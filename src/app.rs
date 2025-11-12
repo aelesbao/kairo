@@ -69,3 +69,14 @@ impl App {
         }
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_handlers_for_scheme() {
+        let apps = App::handlers_for_scheme("http").unwrap();
+        assert!(!apps.is_empty());
+    }
+}
