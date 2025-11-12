@@ -1,7 +1,7 @@
 use clap::{Parser, Subcommand};
 use console::style;
 use dialoguer::{Select, theme::ColorfulTheme};
-use kiro::{KiroResult, handlers_for_scheme, open_with_app};
+use kiro::{App, KiroResult};
 
 /// Kiro
 #[derive(Parser, Debug)]
@@ -48,32 +48,33 @@ fn main() -> KiroResult<()> {
                 _ => unreachable!(),
             };
 
-            let apps = handlers_for_scheme(&scheme)?;
+            let apps = App::handlers_for_scheme(&scheme)?;
             println!(
                 "{: <16} {}",
                 style("App ID").bold().green(),
                 style("Name").bold().green()
             );
             for app in apps {
-                println!("{: <16} {}", app.appid, app.name);
+                println!("{:<16} {}", app.appid, app.name);
             }
         }
 
         Commands::Open { url } => {
-            let apps = handlers_for_scheme(url.scheme())?;
+            let apps = App::handlers_for_scheme(url.scheme())?;
+            let app_names: Vec<String> = apps
+                .iter()
+                .map(|app| format!("{:<16} {}", app.appid, app.name))
+                .collect();
 
             let selection = Select::with_theme(&ColorfulTheme::default())
                 .with_prompt("Select an application to open the URL with")
                 // TODO: save the last used app as default
                 .default(0)
-                .items(&apps[..])
+                .items(&app_names)
                 .interact()
                 .unwrap();
 
-            let app = apps[selection].clone();
-
-            println!("Opening on {}", style(&app).cyan());
-            open_with_app(app, url)?;
+            apps[selection].open_url(url)?;
         }
     }
 
