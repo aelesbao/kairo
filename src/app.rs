@@ -22,6 +22,12 @@ pub struct App {
 impl App {
     /// Opens the given URL with this application.
     pub fn open_url(&self, url: Url) -> Result<u32> {
+        log::info!(
+            "Opening URL '{}' with application '{}'",
+            url,
+            self.path.display()
+        );
+
         let locales = fde::get_languages_from_env();
         let de = fde::DesktopEntry::from_path(self.path.clone(), Some(&locales))?;
 
@@ -31,6 +37,8 @@ impl App {
                 path: self.path.clone(),
             });
         };
+
+        log::debug!("Executing command: '{}' with args: {:?}", cmd, args);
 
         let program = Command::new(cmd).args(args).spawn()?;
 
@@ -51,8 +59,14 @@ impl App {
     ) -> Result<Vec<Self>> {
         let locales = locales.unwrap_or_else(fde::get_languages_from_env);
         let search_paths = search_paths.unwrap_or_else(|| fde::default_paths().collect());
-        let entries = fde::Iter::new(search_paths.into_iter()).entries(Some(&locales));
 
+        log::debug!(
+            "Searching for applications handling scheme '{}' in paths: {:?}",
+            scheme,
+            search_paths
+        );
+
+        let entries = fde::Iter::new(search_paths.into_iter()).entries(Some(&locales));
         let scheme_handler_mime = format!("x-scheme-handler/{}", scheme)
             .as_str()
             .parse::<Mime>()?;
@@ -63,7 +77,13 @@ impl App {
                     .is_some_and(|mime| mime.contains(&scheme_handler_mime.essence_str()))
             })
             .map(|entry| Self::from_desktop_entry(entry, &locales))
-            .collect();
+            .collect::<Vec<_>>();
+
+        log::info!(
+            "Found {} applications with support for '{}'",
+            apps.len(),
+            scheme_handler_mime
+        );
 
         Ok(apps)
     }
