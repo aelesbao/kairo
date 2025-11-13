@@ -15,9 +15,12 @@ keywords = ["freedesktop", "desktop", "cli"]
 [dependencies]
 anyhow = { version = "1.0.100", features = ["backtrace"] }
 clap = { version = "4.5.51", features = ["derive"] }
+clap-verbosity = "2.1.0"
 console = "0.16.1"
 dialoguer = "0.12.0"
 freedesktop-desktop-entry = "0.7.19"
+log = "0.4.28"
 mime = "0.3.17"
+pretty_env_logger = "0.5.0"
 thiserror = "2.0.17"
 url = "2.5.7"
