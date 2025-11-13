@@ -1,4 +1,7 @@
-use std::{path::Path, process::Command};
+use std::{
+    path::{Path, PathBuf},
+    process::Command,
+};
 
 use freedesktop_desktop_entry as fde;
 use mime::Mime;
@@ -33,19 +36,28 @@ impl App {
     }
 
     /// Retrieves all applications that can handle the specified URL scheme.
-    pub fn handlers_for_scheme(scheme: &str) -> Result<Vec<Self>> {
+    ///
+    /// # Arguments
+    ///
+    /// * `scheme` - The URL scheme to query (e.g., "http", "mailto").
+    /// * `locales` - Optional list of locales for localization. If `None`, it fetches the system's default locales.
+    /// * `search_paths` - Optional list of paths to search for desktop entries. If `None`, it uses the default XDG paths.
+    pub fn handlers_for_scheme(
+        scheme: &str,
+        locales: Option<Vec<String>>,
+        search_paths: Option<Vec<PathBuf>>,
+    ) -> Result<Vec<Self>> {
+        let locales = locales.unwrap_or_else(fde::get_languages_from_env);
+        let search_paths = search_paths.unwrap_or_else(|| fde::default_paths().collect());
+        let entries = fde::Iter::new(search_paths.into_iter()).entries(Some(&locales));
+
         let scheme_handler_mime = format!("x-scheme-handler/{}", scheme)
             .as_str()
             .parse::<Mime>()?;
 
-        // TODO: find workaround for testing
-        let locales = fde::get_languages_from_env();
-        let entries = fde::Iter::new(fde::default_paths()).entries(Some(&locales));
-
         let apps = entries
-            .filter(|entry| {
-                entry
-                    .mime_type()
+            .filter(|de| {
+                de.mime_type()
                     .is_some_and(|mime| mime.contains(&scheme_handler_mime.essence_str()))
             })
             .map(|entry| Self::from_desktop_entry(entry, &locales))
@@ -67,16 +79,5 @@ impl App {
             icon: entry.icon().map(|icon| icon.into()),
             path: entry.path.into(),
         }
-    }
-}
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn test_handlers_for_scheme() {
-        let apps = App::handlers_for_scheme("http").unwrap();
-        assert!(!apps.is_empty());
     }
 }
