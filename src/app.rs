@@ -14,6 +14,7 @@ use crate::{Error, Result};
 pub struct App {
     pub appid: Box<str>,
     pub name: Box<str>,
+    pub comment: Option<Box<str>>,
     pub icon: Option<Box<str>>,
     pub path: Box<Path>,
 }
@@ -66,9 +67,15 @@ impl App {
         Ok(apps)
     }
 
-    fn from_desktop_entry<L: AsRef<str>>(entry: fde::DesktopEntry, locales: &[L]) -> Self {
-        let appid: Box<str> = entry.appid.clone().into();
-        let name = entry
+    /// Creates an [App] instance from a [freedesktop_desktop_entry::DesktopEntry].
+    ///
+    /// # Arguments
+    ///
+    /// * `de` - The desktop entry to convert.
+    /// * `locales` - Used for localizing the app's name and comment.
+    pub fn from_desktop_entry<L: AsRef<str>>(de: fde::DesktopEntry, locales: &[L]) -> Self {
+        let appid: Box<str> = de.appid.clone().into();
+        let name = de
             .name(locales)
             .map(|name| name.into())
             .unwrap_or_else(|| appid.clone());
@@ -76,8 +83,9 @@ impl App {
         Self {
             appid,
             name,
-            icon: entry.icon().map(|icon| icon.into()),
-            path: entry.path.into(),
+            comment: de.comment(locales).map(|comment| comment.into()),
+            icon: de.icon().map(|icon| icon.into()),
+            path: de.path.into(),
         }
     }
 }
