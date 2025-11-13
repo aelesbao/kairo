@@ -1,4 +1,5 @@
 use clap::{Parser, Subcommand};
+use clap_verbosity::{Verbosity, WarnLevel};
 use console::style;
 use dialoguer::{Select, theme::ColorfulTheme};
 use kiro::{App, Result};
@@ -10,6 +11,9 @@ use kiro::{App, Result};
 struct Args {
     #[command(subcommand)]
     command: Commands,
+
+    #[command(flatten)]
+    verbose: Verbosity<WarnLevel>,
 }
 
 #[derive(Subcommand, Debug)]
@@ -39,6 +43,10 @@ enum Commands {
 
 fn main() -> Result<()> {
     let args = Args::parse();
+
+    pretty_env_logger::formatted_builder()
+        .filter_level(args.verbose.log_level_filter())
+        .init();
 
     match args.command {
         Commands::List { url, scheme } => {
