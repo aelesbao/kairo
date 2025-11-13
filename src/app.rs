@@ -7,7 +7,7 @@ use freedesktop_desktop_entry as fde;
 use mime::Mime;
 use url::Url;
 
-use crate::{Error, Result};
+use crate::{Result, exec::ExecParser};
 
 /// Represents an application that can handle specific URL schemes.
 #[derive(Clone, Debug)]
@@ -31,13 +31,7 @@ impl App {
         let locales = fde::get_languages_from_env();
         let de = fde::DesktopEntry::from_path(self.path.clone(), Some(&locales))?;
 
-        let exec_args = de.parse_exec_with_uris(&[url.as_str()], &locales)?;
-        let [cmd, args @ ..] = exec_args.as_slice() else {
-            return Err(Error::ParseExecArgsFailed {
-                path: self.path.clone(),
-            });
-        };
-
+        let (cmd, args) = ExecParser::new(&de, &locales).parse_with_uris(&[url.as_str()])?;
         log::debug!("Executing command: '{}' with args: {:?}", cmd, args);
 
         let program = Command::new(cmd).args(args).spawn()?;

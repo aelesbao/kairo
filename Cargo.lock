@@ -485,6 +485,7 @@ dependencies = [
  "log",
  "mime",
  "pretty_env_logger",
+ "shell-words",
  "thiserror",
  "url",
 ]
