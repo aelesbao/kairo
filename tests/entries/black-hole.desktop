@@ -1,0 +1,19 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Exec=echo --arg "Value with spaces" %u
+Terminal=false
+MimeType=x-scheme-handler/http;x-scheme-handler/https;
+Actions=new-window;new-private-window;
+Name=Black Hole Browser
+Name[de]=Schwarzes Loch-Browser
+Comment=A minimalist browser
+Comment[de]=Ein minimalistischer Browser
+
+[Desktop Action new-window]
+Exec=/dev/null --new-window --arg "Value with spaces" %u
+Name=New Window
+
+[Desktop Action new-private-window]
+Exec=/dev/null --private-window --arg "Value with spaces" %u
+Name=New Private Window

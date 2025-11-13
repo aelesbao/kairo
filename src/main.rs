@@ -48,7 +48,7 @@ fn main() -> Result<()> {
                 _ => unreachable!(),
             };
 
-            let apps = App::handlers_for_scheme(&scheme)?;
+            let apps = App::handlers_for_scheme(&scheme, None, None)?;
             println!(
                 "{: <16} {}",
                 style("App ID").bold().green(),
@@ -60,7 +60,7 @@ fn main() -> Result<()> {
         }
 
         Commands::Open { url } => {
-            let apps = App::handlers_for_scheme(url.scheme())?;
+            let apps = App::handlers_for_scheme(url.scheme(), None, None)?;
             let app_names: Vec<String> = apps
                 .iter()
                 .map(|app| format!("{:<16} {}", app.appid, app.name))
