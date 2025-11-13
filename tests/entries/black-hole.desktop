@@ -1,7 +1,7 @@
 [Desktop Entry]
 Version=1.0
 Type=Application
-Exec=/dev/null --arg "Value with spaces" %u
+Exec=echo --arg "Value with spaces" %u
 Terminal=false
 MimeType=x-scheme-handler/http;x-scheme-handler/https;
 Actions=new-window;new-private-window;

@@ -22,9 +22,10 @@ pub struct App {
 impl App {
     /// Opens the given URL with this application.
     pub fn open_url(&self, url: Url) -> Result<u32> {
-        let entry = fde::DesktopEntry::from_path::<&str>(self.path.clone(), None)?;
         let locales = fde::get_languages_from_env();
-        let exec_args = entry.parse_exec_with_uris(&[url.as_str()], &locales)?;
+        let de = fde::DesktopEntry::from_path(self.path.clone(), Some(&locales))?;
+
+        let exec_args = de.parse_exec_with_uris(&[url.as_str()], &locales)?;
         let [cmd, args @ ..] = exec_args.as_slice() else {
             return Err(Error::ParseExecArgsFailed {
                 path: self.path.clone(),

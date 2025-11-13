@@ -55,3 +55,19 @@ fn test_from_desktop_entry() {
     );
     assert!(black_hole_app.icon.is_none());
 }
+
+#[test]
+fn test_open_url() {
+    let entries_path = entries_path();
+
+    let locales: [String; 0] = [];
+    let de = fde::DesktopEntry::from_path(entries_path.join("black-hole.desktop"), Some(&locales))
+        .unwrap();
+    let app = App::from_desktop_entry(de, &locales);
+
+    let url = "http://github.com".parse().unwrap();
+    let result = app.open_url(url);
+
+    assert!(result.is_ok());
+    assert_ne!(result.unwrap(), 0);
+}
