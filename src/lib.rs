@@ -1,5 +1,6 @@
 mod app;
 mod error;
+pub mod exec;
 
 pub type Result<T> = std::result::Result<T, error::Error>;
 
