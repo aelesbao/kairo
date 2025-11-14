@@ -1,7 +1,7 @@
 [package]
 name = "kiro"
 description = "CLI and Desktop application for smart URL routing"
-version = "0.0.1"
+version = "0.1.0"
 authors = ["Augusto Elesbão <aelesbao@gmail.com>"]
 edition = "2024"
 repository = "https://github.com/aelesbao/kiro"
