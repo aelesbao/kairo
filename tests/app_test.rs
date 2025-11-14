@@ -1,17 +1,11 @@
-use std::path::PathBuf;
+mod utils;
 
 use freedesktop_desktop_entry as fde;
 use kiro::App;
 
-const CARGO_MANIFEST_DIR: &str = env!("CARGO_MANIFEST_DIR");
-
-fn entries_path() -> PathBuf {
-    PathBuf::from(format!("{}/tests/entries", CARGO_MANIFEST_DIR))
-}
-
 #[test]
 fn test_handlers_for_scheme() {
-    let search_paths = vec![entries_path()];
+    let search_paths = vec![utils::entries_path()];
 
     let apps = App::handlers_for_scheme("http", None, Some(search_paths.clone())).unwrap();
     assert_eq!(apps.len(), 3);
@@ -25,7 +19,7 @@ fn test_handlers_for_scheme() {
 
 #[test]
 fn test_from_desktop_entry() {
-    let entries_path = entries_path();
+    let entries_path = utils::entries_path();
 
     let locales: [String; 0] = [];
     let firefox_de =
@@ -58,11 +52,8 @@ fn test_from_desktop_entry() {
 
 #[test]
 fn test_open_url() {
-    let entries_path = entries_path();
-
     let locales: [String; 0] = [];
-    let de = fde::DesktopEntry::from_path(entries_path.join("black-hole.desktop"), Some(&locales))
-        .unwrap();
+    let de = utils::black_hole_de(Some(&locales));
     let app = App::from_desktop_entry(de, &locales);
 
     let url = "http://github.com".parse().unwrap();
