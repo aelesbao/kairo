@@ -1,19 +1,22 @@
 mod utils;
 
 use freedesktop_desktop_entry as fde;
-use kiro::App;
+use kiro::UrlHandlerApp;
 
 #[test]
 fn test_handlers_for_scheme() {
     let search_paths = vec![utils::entries_path()];
 
-    let apps = App::handlers_for_scheme("http", None, Some(search_paths.clone())).unwrap();
+    let apps =
+        UrlHandlerApp::handlers_for_scheme("http", None, Some(search_paths.clone())).unwrap();
     assert_eq!(apps.len(), 3);
 
-    let apps = App::handlers_for_scheme("ipfs", None, Some(search_paths.clone())).unwrap();
+    let apps =
+        UrlHandlerApp::handlers_for_scheme("ipfs", None, Some(search_paths.clone())).unwrap();
     assert_eq!(apps.len(), 1);
 
-    let apps = App::handlers_for_scheme("file", None, Some(search_paths.clone())).unwrap();
+    let apps =
+        UrlHandlerApp::handlers_for_scheme("file", None, Some(search_paths.clone())).unwrap();
     assert_eq!(apps.len(), 0);
 }
 
@@ -24,7 +27,7 @@ fn test_from_desktop_entry() {
     let locales: [String; 0] = [];
     let firefox_de =
         fde::DesktopEntry::from_path(entries_path.join("firefox.desktop"), Some(&locales)).unwrap();
-    let firefox_app = App::from_desktop_entry(firefox_de.clone(), &locales);
+    let firefox_app = UrlHandlerApp::from_desktop_entry(firefox_de.clone(), &locales);
 
     assert_eq!(firefox_app.appid.as_ref(), "firefox");
     assert_eq!(firefox_app.name.as_ref(), "Firefox");
@@ -40,7 +43,7 @@ fn test_from_desktop_entry() {
     let black_hole_de =
         fde::DesktopEntry::from_path(entries_path.join("black-hole.desktop"), Some(&locales))
             .unwrap();
-    let black_hole_app = App::from_desktop_entry(black_hole_de, &locales);
+    let black_hole_app = UrlHandlerApp::from_desktop_entry(black_hole_de, &locales);
 
     assert_eq!(black_hole_app.name.as_ref(), "Schwarzes Loch-Browser");
     assert_eq!(
@@ -54,7 +57,7 @@ fn test_from_desktop_entry() {
 fn test_open_url() {
     let locales: [String; 0] = [];
     let de = utils::black_hole_de(Some(&locales));
-    let app = App::from_desktop_entry(de, &locales);
+    let app = UrlHandlerApp::from_desktop_entry(de, &locales);
 
     let url = "http://github.com".parse().unwrap();
     let result = app.open_url(url);

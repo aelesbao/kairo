@@ -1,7 +1,7 @@
 use clap::{Parser, Subcommand};
 use console::style;
 use dialoguer::{Select, theme::ColorfulTheme};
-use kiro::{App, Result};
+use kiro::{Result, UrlHandlerApp};
 
 /// Kiro
 #[derive(Parser, Debug)]
@@ -67,7 +67,7 @@ fn main() -> Result<()> {
                 _ => unreachable!(),
             };
 
-            let apps = App::handlers_for_scheme(&scheme, None, search_paths)?;
+            let apps = UrlHandlerApp::handlers_for_scheme(&scheme, None, search_paths)?;
             println!(
                 "{: <16} {}",
                 style("App ID").bold().green(),
@@ -79,7 +79,7 @@ fn main() -> Result<()> {
         }
 
         Commands::Open { url, search_paths } => {
-            let apps = App::handlers_for_scheme(url.scheme(), None, search_paths)?;
+            let apps = UrlHandlerApp::handlers_for_scheme(url.scheme(), None, search_paths)?;
             let app_names: Vec<String> = apps
                 .iter()
                 .map(|app| format!("{:<16} {}", app.appid, app.name))

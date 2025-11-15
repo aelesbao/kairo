@@ -11,7 +11,7 @@ use crate::{Result, exec::ExecParser};
 
 /// Represents an application that can handle specific URL schemes.
 #[derive(Clone, Debug)]
-pub struct App {
+pub struct UrlHandlerApp {
     pub appid: Box<str>,
     pub name: Box<str>,
     pub comment: Option<Box<str>>,
@@ -19,7 +19,7 @@ pub struct App {
     pub path: Box<Path>,
 }
 
-impl App {
+impl UrlHandlerApp {
     /// Opens the given URL with this application.
     pub fn open_url(&self, url: Url) -> Result<u32> {
         log::info!(
