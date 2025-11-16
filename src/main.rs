@@ -46,26 +46,29 @@ enum Commands {
     },
 }
 
-fn main() -> Result<()> {
+fn main() {
     let args = Args::parse();
 
     pretty_env_logger::formatted_builder()
         .filter_level(args.verbose.log_level_filter())
         .init();
 
-    match args.command {
-        Commands::List { url, scheme } => list(url, scheme, args.search_paths)?,
-        Commands::Open { url } => open(url, args.search_paths)?,
-    }
+    let result = match args.command {
+        Commands::List { url, scheme } => list(url, scheme, args.search_paths),
+        Commands::Open { url } => open(url, args.search_paths),
+    };
 
-    Ok(())
+    if let Err(e) = result {
+        eprintln!("Error: {}", e);
+        std::process::exit(1);
+    }
 }
 
 fn list(
     url: Option<url::Url>,
     scheme: Option<String>,
     search_paths: Option<Vec<PathBuf>>,
-) -> Result<()> {
+) -> kiro::Result<()> {
     let scheme = match (url, scheme) {
         (Some(url), _) => url.scheme().to_string(),
         (_, Some(scheme)) => scheme,
@@ -86,13 +89,12 @@ fn list(
     Ok(())
 }
 
-fn open(url: url::Url, search_paths: Option<Vec<PathBuf>>) -> Result<()> {
+fn open(url: url::Url, search_paths: Option<Vec<PathBuf>>) -> kiro::Result<()> {
     let apps = UrlHandlerApp::handlers_for_scheme(url.scheme(), None, search_paths)?;
     let app_names: Vec<String> = apps
         .iter()
         .map(|app| format!("{:<16} {}", app.appid, app.name))
         .collect();
-
     let selection = Select::with_theme(&ColorfulTheme::default())
         .with_prompt("Select an application to open the URL with")
         .report(false)
