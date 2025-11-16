@@ -11,6 +11,10 @@ struct Args {
     #[command(subcommand)]
     command: Commands,
 
+    /// Paths to search for desktop entries.
+    #[arg(long, default_value = None, global = true)]
+    search_paths: Option<Vec<std::path::PathBuf>>,
+
     #[command(flatten)]
     verbose: clap_verbosity::Verbosity<clap_verbosity::WarnLevel>,
 }
@@ -31,20 +35,12 @@ enum Commands {
         /// The URL scheme to query (conflicts with --url).
         #[arg(short, long, conflicts_with("url"), required_unless_present("url"))]
         scheme: Option<String>,
-
-        /// Paths to search for desktop entries.
-        #[arg(long, default_value = None)]
-        search_paths: Option<Vec<std::path::PathBuf>>,
     },
 
     /// Opens the given URL with one of its associated applications.
     Open {
         /// The URL to open.
         url: url::Url,
-
-        /// Paths to search for desktop entries.
-        #[arg(long, default_value = None)]
-        search_paths: Option<Vec<std::path::PathBuf>>,
     },
 }
 
@@ -56,18 +52,14 @@ fn main() -> Result<()> {
         .init();
 
     match args.command {
-        Commands::List {
-            url,
-            scheme,
-            search_paths,
-        } => {
+        Commands::List { url, scheme } => {
             let scheme = match (url, scheme) {
                 (Some(url), _) => url.scheme().to_string(),
                 (_, Some(scheme)) => scheme,
                 _ => unreachable!(),
             };
 
-            let apps = UrlHandlerApp::handlers_for_scheme(&scheme, None, search_paths)?;
+            let apps = UrlHandlerApp::handlers_for_scheme(&scheme, None, args.search_paths)?;
             println!(
                 "{: <16} {}",
                 style("App ID").bold().green(),
@@ -78,8 +70,8 @@ fn main() -> Result<()> {
             }
         }
 
-        Commands::Open { url, search_paths } => {
-            let apps = UrlHandlerApp::handlers_for_scheme(url.scheme(), None, search_paths)?;
+        Commands::Open { url } => {
+            let apps = UrlHandlerApp::handlers_for_scheme(url.scheme(), None, args.search_paths)?;
             let app_names: Vec<String> = apps
                 .iter()
                 .map(|app| format!("{:<16} {}", app.appid, app.name))
