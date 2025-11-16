@@ -9,9 +9,6 @@ pub enum Error {
     #[error("failed to open desktop entry: {0}")]
     DesktopEntryDecode(#[from] freedesktop_desktop_entry::DecodeError),
 
-    #[error("failed to execute command: {0}")]
-    DesktopEntryExec(#[from] freedesktop_desktop_entry::ExecError),
-
     #[error("failed to parse Exec command: {0}")]
     ParseExecArgs(#[from] crate::exec::ExecParseError),
 
