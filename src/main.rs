@@ -1,3 +1,5 @@
+use std::path::PathBuf;
+
 use clap::{Parser, Subcommand};
 use console::style;
 use dialoguer::{Select, theme::ColorfulTheme};
@@ -52,48 +54,60 @@ fn main() -> Result<()> {
         .init();
 
     match args.command {
-        Commands::List { url, scheme } => {
-            let scheme = match (url, scheme) {
-                (Some(url), _) => url.scheme().to_string(),
-                (_, Some(scheme)) => scheme,
-                _ => unreachable!(),
-            };
+        Commands::List { url, scheme } => list(url, scheme, args.search_paths)?,
+        Commands::Open { url } => open(url, args.search_paths)?,
+    }
 
-            let apps = UrlHandlerApp::handlers_for_scheme(&scheme, None, args.search_paths)?;
-            println!(
-                "{: <16} {}",
-                style("App ID").bold().green(),
-                style("Name").bold().green()
-            );
-            for app in apps {
-                println!("{:<16} {}", app.appid, app.name);
-            }
-        }
+    Ok(())
+}
 
-        Commands::Open { url } => {
-            let apps = UrlHandlerApp::handlers_for_scheme(url.scheme(), None, args.search_paths)?;
-            let app_names: Vec<String> = apps
-                .iter()
-                .map(|app| format!("{:<16} {}", app.appid, app.name))
-                .collect();
+fn list(
+    url: Option<url::Url>,
+    scheme: Option<String>,
+    search_paths: Option<Vec<PathBuf>>,
+) -> Result<()> {
+    let scheme = match (url, scheme) {
+        (Some(url), _) => url.scheme().to_string(),
+        (_, Some(scheme)) => scheme,
+        _ => unreachable!(),
+    };
+    let apps = UrlHandlerApp::handlers_for_scheme(&scheme, None, search_paths)?;
 
-            let selection = Select::with_theme(&ColorfulTheme::default())
-                .with_prompt("Select an application to open the URL with")
-                .report(false)
-                // TODO: save the last used app as default
-                .default(0)
-                .items(&app_names)
-                .interact_opt()
-                .unwrap();
+    println!(
+        "{: <16} {}",
+        style("App ID").bold().green(),
+        style("Name").bold().green()
+    );
 
-            if let Some(selection) = selection {
-                println!(
-                    "Opening URL with {}...",
-                    style(&apps[selection].name).bold().green()
-                );
-                apps[selection].open_url(url)?;
-            }
-        }
+    for app in apps {
+        println!("{:<16} {}", app.appid, app.name);
+    }
+
+    Ok(())
+}
+
+fn open(url: url::Url, search_paths: Option<Vec<PathBuf>>) -> Result<()> {
+    let apps = UrlHandlerApp::handlers_for_scheme(url.scheme(), None, search_paths)?;
+    let app_names: Vec<String> = apps
+        .iter()
+        .map(|app| format!("{:<16} {}", app.appid, app.name))
+        .collect();
+
+    let selection = Select::with_theme(&ColorfulTheme::default())
+        .with_prompt("Select an application to open the URL with")
+        .report(false)
+        // TODO: save the last used app as default
+        .default(0)
+        .items(&app_names)
+        .interact_opt()
+        .unwrap();
+
+    if let Some(selection) = selection {
+        println!(
+            "Opening URL with {}...",
+            style(&apps[selection].name).bold().green()
+        );
+        apps[selection].open_url(url)?;
     }
 
     Ok(())
