@@ -28,6 +28,17 @@ unicode-segmentation = { workspace = true }
 section = "web"
 assets = [
   "$auto",
-  { source = "assets/*.svg", dest = "usr/share/kairo-desktop/", mode = "644" },
-  { source = "../LICENSE", dest = "usr/share/doc/kairo-desktop/LICENSE", mode = "644" },
+  { source = "assets/*", dest = "usr/share/kairo/", mode = "644" },
+  { source = "../LICENSE", dest = "usr/share/doc/kairo/LICENSE", mode = "644" },
 ]
+
+[package.metadata.bundle]
+name = "Kairo"
+identifier = "io.github.aelesbao.Kairo"
+icon = ["assets/kairo.png"]
+category = "public.app-category.productivity"
+resources = ["assets/*", "../LICENSE"]
+long_description = """Kairo routes links to the right app."""
+osx_url_schemes = ["http", "https"]
+linux_mime_types = ["x-scheme-handler/http", "x-scheme-handler/https"]
+linux_exec_args = "%u"

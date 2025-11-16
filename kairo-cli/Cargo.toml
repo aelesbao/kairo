@@ -28,3 +28,7 @@ pretty_env_logger = { workspace = true }
 
 [package.metadata.deb]
 section = "web"
+assets = [
+  "$auto",
+  { source = "../LICENSE", dest = "usr/share/doc/kairo/LICENSE", mode = "644" },
+]
