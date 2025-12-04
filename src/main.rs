@@ -43,6 +43,10 @@ enum Commands {
     Open {
         /// The URL to open.
         url: url::Url,
+
+        /// Opens the URL using the default or last application used without prompting.
+        #[arg(long, default_value = "false")]
+        no_prompt: bool,
     },
 }
 
@@ -55,7 +59,7 @@ fn main() {
 
     let result = match args.command {
         Commands::List { url, scheme } => list(url, scheme, args.search_paths),
-        Commands::Open { url } => open(url, args.search_paths),
+        Commands::Open { url, no_prompt } => open(url, args.search_paths, no_prompt),
     };
 
     if let Err(e) = result {
@@ -89,8 +93,22 @@ fn list(
     Ok(())
 }
 
-fn open(url: url::Url, search_paths: Option<Vec<PathBuf>>) -> kiro::Result<()> {
+fn open(
+    url: url::Url,
+    search_paths: Option<Vec<PathBuf>>,
+    no_prompt: bool,
+) -> kiro::Result<()> {
     let apps = UrlHandlerApp::handlers_for_scheme(url.scheme(), None, search_paths)?;
+
+    if apps.is_empty() {
+        return Err(kiro::Error::NoHandlersFound(url.scheme().to_string()));
+    }
+
+    if no_prompt || apps.len() == 1 {
+        open_with_app(&apps[0], url)?;
+        return Ok(());
+    }
+
     let app_names: Vec<String> = apps
         .iter()
         .map(|app| format!("{:<16} {}", app.appid, app.name))
@@ -105,12 +123,13 @@ fn open(url: url::Url, search_paths: Option<Vec<PathBuf>>) -> kiro::Result<()> {
         .unwrap();
 
     if let Some(selection) = selection {
-        println!(
-            "Opening URL with {}...",
-            style(&apps[selection].name).bold().green()
-        );
-        apps[selection].open_url(url)?;
+        open_with_app(&apps[selection], url)?;
     }
 
     Ok(())
+}
+
+fn open_with_app(app: &UrlHandlerApp, url: url::Url) -> kiro::Result<u32> {
+    println!("Opening URL with {}...", style(&app.name).bold().green());
+    app.open_url(url)
 }

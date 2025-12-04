@@ -3,6 +3,9 @@ pub enum Error {
     #[error("I/O error: {0}")]
     Io(#[from] std::io::Error),
 
+    #[error("no handlers found for URL scheme: {0}")]
+    NoHandlersFound(String),
+
     #[error("failed to convert scheme to MIME type: {0}")]
     MimeFromStr(#[from] mime::FromStrError),
 
