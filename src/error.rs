@@ -17,4 +17,7 @@ pub enum Error {
 
     #[error("failed to parse arguments: {0}")]
     ExecArgsShellParse(#[from] shell_words::ParseError),
+
+    #[error("failed to run UI: {0}")]
+    Ui(#[from] iced::Error),
 }

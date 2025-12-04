@@ -1,15 +1,17 @@
-use std::path::PathBuf;
+use std::{io::IsTerminal, path::PathBuf};
 
 use clap::{Parser, Subcommand};
 use console::style;
 use dialoguer::{Select, theme::ColorfulTheme};
-use kiro::{Result, UrlHandlerApp};
+use kiro::UrlHandlerApp;
+
+mod app;
 
 /// Kiro
 #[derive(Parser, Debug)]
 #[command(version, author, about, long_about = None)]
 #[command(next_line_help = true)]
-struct Args {
+struct Cli {
     #[command(subcommand)]
     command: Commands,
 
@@ -47,19 +49,27 @@ enum Commands {
         /// Opens the URL using the default or last application used without prompting.
         #[arg(long, default_value = "false")]
         no_prompt: bool,
+
+        /// Uses the UI to select the application even if stdout is not a terminal.
+        #[arg(long, default_value = "false")]
+        ui: bool,
     },
 }
 
 fn main() {
-    let args = Args::parse();
+    let args = Cli::parse();
 
     pretty_env_logger::formatted_builder()
-        .filter_level(args.verbose.log_level_filter())
+        // .filter_level(args.verbose.log_level_filter())
+        .filter(
+            Some(env!("CARGO_CRATE_NAME")),
+            args.verbose.log_level_filter(),
+        )
         .init();
 
     let result = match args.command {
         Commands::List { url, scheme } => list(url, scheme, args.search_paths),
-        Commands::Open { url, no_prompt } => open(url, args.search_paths, no_prompt),
+        Commands::Open { url, no_prompt, ui } => open(url, args.search_paths, no_prompt, ui),
     };
 
     if let Err(e) = result {
@@ -97,6 +107,7 @@ fn open(
     url: url::Url,
     search_paths: Option<Vec<PathBuf>>,
     no_prompt: bool,
+    use_ui: bool,
 ) -> kiro::Result<()> {
     let apps = UrlHandlerApp::handlers_for_scheme(url.scheme(), None, search_paths)?;
 
@@ -106,6 +117,12 @@ fn open(
 
     if no_prompt || apps.len() == 1 {
         open_with_app(&apps[0], url)?;
+        return Ok(());
+    }
+
+    if !std::io::stdout().is_terminal() || use_ui {
+        app::run(url, apps)?;
+        log::info!("Exited UI after URL handler selection");
         return Ok(());
     }
 
