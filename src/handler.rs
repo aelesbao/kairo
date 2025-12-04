@@ -1,7 +1,4 @@
-use std::{
-    path::{Path, PathBuf},
-    process::Command,
-};
+use std::{path::PathBuf, process::Command};
 
 use freedesktop_desktop_entry as fde;
 use mime::Mime;
@@ -12,11 +9,11 @@ use crate::{Result, exec::ExecParser};
 /// Represents an application that can handle specific URL schemes.
 #[derive(Clone, Debug)]
 pub struct UrlHandlerApp {
-    pub appid: Box<str>,
-    pub name: Box<str>,
-    pub comment: Option<Box<str>>,
-    pub icon: Option<Box<str>>,
-    pub path: Box<Path>,
+    pub appid: String,
+    pub name: String,
+    pub comment: Option<String>,
+    pub icon: fde::IconSource,
+    pub path: PathBuf,
 }
 
 impl UrlHandlerApp {
@@ -89,7 +86,7 @@ impl UrlHandlerApp {
     /// * `de` - The desktop entry to convert.
     /// * `locales` - Used for localizing the app's name and comment.
     pub fn from_desktop_entry<L: AsRef<str>>(de: fde::DesktopEntry, locales: &[L]) -> Self {
-        let appid: Box<str> = de.appid.clone().into();
+        let appid = de.appid.clone();
         let name = de
             .name(locales)
             .map(|name| name.into())
@@ -99,8 +96,27 @@ impl UrlHandlerApp {
             appid,
             name,
             comment: de.comment(locales).map(|comment| comment.into()),
-            icon: de.icon().map(|icon| icon.into()),
-            path: de.path.into(),
+            icon: de
+                .icon()
+                .map(fde::IconSource::from_unknown)
+                .unwrap_or_default(),
+            path: de.path,
+        }
+    }
+
+    pub fn icon_path(&self, icon_size: u16) -> Option<std::path::PathBuf> {
+        log::debug!(
+            "Fetching icon for appid={} icon={:?}",
+            self.appid,
+            self.icon
+        );
+
+        match &self.icon {
+            fde::IconSource::Path(path) => Some(path.to_owned()),
+            fde::IconSource::Name(name) => freedesktop_icons::lookup(name)
+                .with_size(icon_size)
+                .with_cache()
+                .find(),
         }
     }
 }

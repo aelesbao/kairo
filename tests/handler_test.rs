@@ -29,13 +29,16 @@ fn test_from_desktop_entry() {
         fde::DesktopEntry::from_path(entries_path.join("firefox.desktop"), Some(&locales)).unwrap();
     let firefox_app = UrlHandlerApp::from_desktop_entry(firefox_de.clone(), &locales);
 
-    assert_eq!(firefox_app.appid.as_ref(), "firefox");
-    assert_eq!(firefox_app.name.as_ref(), "Firefox");
+    assert_eq!(firefox_app.appid.as_str(), "firefox");
+    assert_eq!(firefox_app.name.as_str(), "Firefox");
     assert_eq!(
-        firefox_app.comment.unwrap().as_ref(),
+        firefox_app.comment.unwrap().as_str(),
         "Browse the World Wide Web"
     );
-    assert_eq!(firefox_app.icon.unwrap().as_ref(), "firefox");
+    assert!(matches!(
+        firefox_app.icon,
+        fde::IconSource::Name(name) if name == firefox_app.appid
+    ));
     assert_eq!(firefox_app.path.to_path_buf(), firefox_de.path);
 
     // Loads localized name and comment
@@ -45,12 +48,12 @@ fn test_from_desktop_entry() {
             .unwrap();
     let black_hole_app = UrlHandlerApp::from_desktop_entry(black_hole_de, &locales);
 
-    assert_eq!(black_hole_app.name.as_ref(), "Schwarzes Loch-Browser");
+    assert_eq!(black_hole_app.name.as_str(), "Schwarzes Loch-Browser");
     assert_eq!(
-        black_hole_app.comment.unwrap().as_ref(),
+        black_hole_app.comment.unwrap().as_str(),
         "Ein minimalistischer Browser"
     );
-    assert!(black_hole_app.icon.is_none());
+    assert_eq!(black_hole_app.icon, fde::IconSource::default());
 }
 
 #[test]
