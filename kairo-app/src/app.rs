@@ -91,12 +91,12 @@ enum Message {
 }
 
 struct App {
-    url: url::Url,
+    url: Url,
     apps: Vec<UrlHandlerApp>,
 }
 
 impl App {
-    fn new(url: url::Url, apps: Vec<UrlHandlerApp>) -> (Self, Task<Message>) {
+    fn new(url: Url, apps: Vec<UrlHandlerApp>) -> (Self, Task<Message>) {
         let chooser = Self { url, apps };
         (chooser, Task::none())
     }
