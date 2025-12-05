@@ -1,7 +1,7 @@
 mod utils;
 
 use freedesktop_desktop_entry as fde;
-use kiro::UrlHandlerApp;
+use kairo_core::UrlHandlerApp;
 
 #[test]
 fn test_handlers_for_scheme() {

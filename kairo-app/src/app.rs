@@ -9,7 +9,7 @@ use iced::{
     widget::{button, center, column, container, image, row, scrollable, svg, text, tooltip},
     window,
 };
-use kiro::UrlHandlerApp;
+use kairo_core::{Url, UrlHandlerApp};
 use unicode_segmentation::UnicodeSegmentation;
 
 #[cfg(target_os = "macos")]
@@ -34,7 +34,7 @@ const ICON_SIZE: u16 = 64;
 
 const UNKOWN_APP_ICON_BYTES: &[u8] = include_bytes!("../assets/unknown.svg");
 
-pub fn run(url: url::Url, apps: Vec<UrlHandlerApp>) -> iced::Result {
+pub fn run(url: Url, apps: Vec<UrlHandlerApp>) -> iced::Result {
     log::info!("Launching UI for URL handler selection");
 
     // TODO: fetch from cargo metadata

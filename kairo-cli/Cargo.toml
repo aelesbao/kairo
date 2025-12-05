@@ -1,0 +1,14 @@
+[package]
+name = "kairo-cli"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+kairo-core = { workspace = true }
+anyhow = { workspace = true }
+clap = { workspace = true }
+clap-verbosity = { workspace = true }
+console = { workspace = true }
+dialoguer = { workspace = true }
+log = { workspace = true }
+pretty_env_logger = { workspace = true }

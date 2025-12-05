@@ -1,0 +1,13 @@
+[package]
+name = "kairo-core"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+freedesktop-desktop-entry = { workspace = true }
+freedesktop-icons = { workspace = true }
+log = { workspace = true }
+mime = { workspace = true }
+shell-words = { workspace = true }
+thiserror = { workspace = true }
+url = { workspace = true }
