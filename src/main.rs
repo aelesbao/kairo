@@ -1,15 +1,23 @@
+use std::{io::IsTerminal, path::PathBuf};
+
 use clap::{Parser, Subcommand};
 use console::style;
 use dialoguer::{Select, theme::ColorfulTheme};
-use kiro::{App, Result};
+use kiro::UrlHandlerApp;
+
+mod app;
 
 /// Kiro
 #[derive(Parser, Debug)]
 #[command(version, author, about, long_about = None)]
 #[command(next_line_help = true)]
-struct Args {
+struct Cli {
     #[command(subcommand)]
     command: Commands,
+
+    /// Paths to search for desktop entries.
+    #[arg(long, default_value = None, global = true)]
+    search_paths: Option<Vec<std::path::PathBuf>>,
 
     #[command(flatten)]
     verbose: clap_verbosity::Verbosity<clap_verbosity::WarnLevel>,
@@ -31,10 +39,6 @@ enum Commands {
         /// The URL scheme to query (conflicts with --url).
         #[arg(short, long, conflicts_with("url"), required_unless_present("url"))]
         scheme: Option<String>,
-
-        /// Paths to search for desktop entries.
-        #[arg(long, default_value = None)]
-        search_paths: Option<Vec<std::path::PathBuf>>,
     },
 
     /// Opens the given URL with one of its associated applications.
@@ -42,67 +46,107 @@ enum Commands {
         /// The URL to open.
         url: url::Url,
 
-        /// Paths to search for desktop entries.
-        #[arg(long, default_value = None)]
-        search_paths: Option<Vec<std::path::PathBuf>>,
+        /// Opens the URL using the default or last application used without prompting.
+        #[arg(long, default_value = "false")]
+        no_prompt: bool,
+
+        /// Uses the UI to select the application even if stdout is not a terminal.
+        #[arg(long, default_value = "false")]
+        ui: bool,
     },
 }
 
-fn main() -> Result<()> {
-    let args = Args::parse();
+fn main() {
+    let args = Cli::parse();
 
     pretty_env_logger::formatted_builder()
-        .filter_level(args.verbose.log_level_filter())
+        // .filter_level(args.verbose.log_level_filter())
+        .filter(
+            Some(env!("CARGO_CRATE_NAME")),
+            args.verbose.log_level_filter(),
+        )
         .init();
 
-    match args.command {
-        Commands::List {
-            url,
-            scheme,
-            search_paths,
-        } => {
-            let scheme = match (url, scheme) {
-                (Some(url), _) => url.scheme().to_string(),
-                (_, Some(scheme)) => scheme,
-                _ => unreachable!(),
-            };
+    let result = match args.command {
+        Commands::List { url, scheme } => list(url, scheme, args.search_paths),
+        Commands::Open { url, no_prompt, ui } => open(url, args.search_paths, no_prompt, ui),
+    };
 
-            let apps = App::handlers_for_scheme(&scheme, None, search_paths)?;
-            println!(
-                "{: <16} {}",
-                style("App ID").bold().green(),
-                style("Name").bold().green()
-            );
-            for app in apps {
-                println!("{:<16} {}", app.appid, app.name);
-            }
-        }
+    if let Err(e) = result {
+        eprintln!("Error: {}", e);
+        std::process::exit(1);
+    }
+}
 
-        Commands::Open { url, search_paths } => {
-            let apps = App::handlers_for_scheme(url.scheme(), None, search_paths)?;
-            let app_names: Vec<String> = apps
-                .iter()
-                .map(|app| format!("{:<16} {}", app.appid, app.name))
-                .collect();
+fn list(
+    url: Option<url::Url>,
+    scheme: Option<String>,
+    search_paths: Option<Vec<PathBuf>>,
+) -> kiro::Result<()> {
+    let scheme = match (url, scheme) {
+        (Some(url), _) => url.scheme().to_string(),
+        (_, Some(scheme)) => scheme,
+        _ => unreachable!(),
+    };
+    let apps = UrlHandlerApp::handlers_for_scheme(&scheme, None, search_paths)?;
 
-            let selection = Select::with_theme(&ColorfulTheme::default())
-                .with_prompt("Select an application to open the URL with")
-                .report(false)
-                // TODO: save the last used app as default
-                .default(0)
-                .items(&app_names)
-                .interact_opt()
-                .unwrap();
+    println!(
+        "{: <16} {}",
+        style("App ID").bold().green(),
+        style("Name").bold().green()
+    );
 
-            if let Some(selection) = selection {
-                println!(
-                    "Opening URL with {}...",
-                    style(&apps[selection].name).bold().green()
-                );
-                apps[selection].open_url(url)?;
-            }
-        }
+    for app in apps {
+        println!("{:<16} {}", app.appid, app.name);
     }
 
     Ok(())
+}
+
+fn open(
+    url: url::Url,
+    search_paths: Option<Vec<PathBuf>>,
+    no_prompt: bool,
+    use_ui: bool,
+) -> kiro::Result<()> {
+    let apps = UrlHandlerApp::handlers_for_scheme(url.scheme(), None, search_paths)?;
+
+    if apps.is_empty() {
+        return Err(kiro::Error::NoHandlersFound(url.scheme().to_string()));
+    }
+
+    if no_prompt || apps.len() == 1 {
+        open_with_app(&apps[0], url)?;
+        return Ok(());
+    }
+
+    if !std::io::stdout().is_terminal() || use_ui {
+        app::run(url, apps)?;
+        log::info!("Exited UI after URL handler selection");
+        return Ok(());
+    }
+
+    let app_names: Vec<String> = apps
+        .iter()
+        .map(|app| format!("{:<16} {}", app.appid, app.name))
+        .collect();
+    let selection = Select::with_theme(&ColorfulTheme::default())
+        .with_prompt("Select an application to open the URL with")
+        .report(false)
+        // TODO: save the last used app as default
+        .default(0)
+        .items(&app_names)
+        .interact_opt()
+        .unwrap();
+
+    if let Some(selection) = selection {
+        open_with_app(&apps[selection], url)?;
+    }
+
+    Ok(())
+}
+
+fn open_with_app(app: &UrlHandlerApp, url: url::Url) -> kiro::Result<u32> {
+    println!("Opening URL with {}...", style(&app.name).bold().green());
+    app.open_url(url)
 }
