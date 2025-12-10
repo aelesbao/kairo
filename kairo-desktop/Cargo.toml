@@ -23,3 +23,11 @@ iced = { workspace = true }
 log = { workspace = true }
 pretty_env_logger = { workspace = true }
 unicode-segmentation = { workspace = true }
+
+[package.metadata.deb]
+section = "web"
+assets = [
+  "$auto",
+  { source = "assets/*.svg", dest = "usr/share/kairo-desktop/", mode = "644" },
+  { source = "../LICENSE", dest = "usr/share/doc/kairo-desktop/LICENSE", mode = "644" },
+]

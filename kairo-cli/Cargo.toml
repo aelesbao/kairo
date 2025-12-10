@@ -21,3 +21,6 @@ console = { workspace = true }
 dialoguer = { workspace = true }
 log = { workspace = true }
 pretty_env_logger = { workspace = true }
+
+[package.metadata.deb]
+section = "web"
