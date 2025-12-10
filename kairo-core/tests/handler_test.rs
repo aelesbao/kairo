@@ -15,9 +15,9 @@ fn test_handlers_for_scheme() {
         UrlHandlerApp::handlers_for_scheme("ipfs", None, Some(search_paths.clone())).unwrap();
     assert_eq!(apps.len(), 1);
 
-    let apps =
-        UrlHandlerApp::handlers_for_scheme("file", None, Some(search_paths.clone())).unwrap();
-    assert_eq!(apps.len(), 0);
+    let err =
+        UrlHandlerApp::handlers_for_scheme("file", None, Some(search_paths.clone())).unwrap_err();
+    assert!(matches!(err, kairo_core::Error::NoHandlersFound(_)));
 }
 
 #[test]
