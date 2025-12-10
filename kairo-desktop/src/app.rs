@@ -17,14 +17,14 @@ use unicode_segmentation::UnicodeSegmentation;
 const APP_ID: &str = "io.github.aelesbao.Kairo";
 
 #[cfg(target_os = "macos")]
+const WIN_SIZE: [f32; 2] = [640.0, 230.0];
+#[cfg(not(target_os = "macos"))]
 const WIN_SIZE: [f32; 2] = [640.0, 210.0];
-#[cfg(not(target_os = "macos"))]
-const WIN_SIZE: [f32; 2] = [640.0, 190.0];
 #[cfg(target_os = "macos")]
-const WIN_MIN_SIZE: [f32; 2] = [480.0, 210.0];
+const WIN_MIN_SIZE: [f32; 2] = [480.0, 230.0];
 #[cfg(not(target_os = "macos"))]
-const WIN_MIN_SIZE: [f32; 2] = [480.0, 190.0];
-const WIN_MAX_SIZE: [f32; 2] = [1280.0, 480.0];
+const WIN_MIN_SIZE: [f32; 2] = [480.0, 210.0];
+const WIN_MAX_SIZE: [f32; 2] = [1280.0, 210.0];
 
 const APP_FONT_SIZE: u32 = 12;
 const URL_FONT_SIZE: u32 = 14;
