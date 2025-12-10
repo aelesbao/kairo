@@ -1,7 +1,16 @@
 [package]
 name = "kairo-app"
-version = "0.1.0"
-edition = "2024"
+description.workspace = true
+version.workspace = true
+authors.workspace = true
+edition.workspace = true
+repository.workspace = true
+homepage.workspace = true
+documentation.workspace = true
+license.workspace = true
+readme.workspace = true
+categories.workspace = true
+keywords.workspace = true
 
 [dependencies]
 kairo-core = { workspace = true }
