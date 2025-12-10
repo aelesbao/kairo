@@ -17,7 +17,7 @@ categories = ["command-line-utilities"]
 keywords = ["freedesktop", "desktop", "cli"]
 
 [workspace.dependencies]
-kairo-core = { path = "kairo-core" }
+kairo-core = { path = "kairo-core", version = "*" }
 anyhow = { version = "1.0.100", features = ["backtrace"] }
 clap = { version = "4.5.51", features = ["derive"] }
 clap-verbosity = "2.1.0"
