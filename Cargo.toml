@@ -3,7 +3,6 @@ members = ["kairo-core", "kairo-cli", "kairo-desktop"]
 resolver = "3"
 
 [workspace.package]
-name = "kairo"
 description = "CLI and Desktop application for smart URL routing"
 version = "0.2.0"
 authors = ["Augusto Elesbão <aelesbao@gmail.com>"]
@@ -33,3 +32,17 @@ shell-words = "1.1.0"
 thiserror = "2.0.17"
 unicode-segmentation = "1.12.0"
 url = "2.5.7"
+
+[profile.release]
+# Reduce code generation units the crates will be split into.
+codegen-units = 1
+# Produce better optimized code, using whole-program analysis.
+lto = "fat"
+# Enable integer overflow checks.
+overflow-checks = true
+# Write debug info into a separate file.
+split-debuginfo = "packed"
+# Decrease final binary size.
+strip = "debuginfo"
+# Exit process with SIGABRT when any thread panics.
+panic = "abort"
