@@ -17,6 +17,11 @@ pub struct Cli {
 
     #[command(flatten)]
     verbose: clap_verbosity::Verbosity<clap_verbosity::WarnLevel>,
+
+    /// Enable UI debug mode to explain the elements layout.
+    #[cfg(debug_assertions)]
+    #[arg(long, default_value_t = false, global = true)]
+    pub debug_ui: bool,
 }
 
 impl Cli {
@@ -36,7 +41,7 @@ impl Cli {
         let apps =
             UrlHandlerApp::handlers_for_scheme(self.url.scheme(), None, self.search_paths.clone())?;
 
-        app::run(self.url.clone(), apps)?;
+        app::run(self.url.clone(), apps, self.debug_ui)?;
 
         Ok(())
     }

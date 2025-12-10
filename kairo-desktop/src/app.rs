@@ -5,6 +5,7 @@ use iced::{
     Length,
     Task,
     Theme,
+    advanced::graphics::text::cosmic_text::skrifa::raw::collections::int_set::Domain,
     border,
     widget::{button, center, column, container, image, row, scrollable, svg, text, tooltip},
     window,
@@ -25,21 +26,28 @@ const WIN_MIN_SIZE: [f32; 2] = [480.0, 210.0];
 const WIN_MIN_SIZE: [f32; 2] = [480.0, 190.0];
 const WIN_MAX_SIZE: [f32; 2] = [1280.0, 480.0];
 
-const APP_FONT_SIZE: u16 = 12;
-const URL_FONT_SIZE: u16 = 14;
-const TOOLTIP_FONT_SIZE: u16 = 10;
+const APP_FONT_SIZE: u32 = 12;
+const URL_FONT_SIZE: u32 = 14;
+const TOOLTIP_FONT_SIZE: u32 = 10;
 
-const OUTER_SPACING: u16 = 20;
-const INNER_SPACING: u16 = 10;
-const BORDER_RADIUS: u16 = 10;
+const OUTER_SPACING: f32 = 20.0;
+const INNER_SPACING: f32 = 10.0;
+const BORDER_RADIUS: f32 = 10.0;
 
 const ICON_SIZE: u16 = 64;
 
 const UNKOWN_APP_ICON_BYTES: &[u8] = include_bytes!("../assets/unknown.svg");
 
-pub fn run(url: Url, apps: Vec<UrlHandlerApp>) -> iced::Result {
+pub fn run(url: Url, apps: Vec<UrlHandlerApp>, explain: bool) -> iced::Result {
     log::info!("Launching UI for URL handler selection");
+    application(url, apps, explain).run()
+}
 
+fn application(
+    url: Url,
+    apps: Vec<UrlHandlerApp>,
+    explain: bool,
+) -> iced::Application<impl iced::Program<Message = Message>> {
     let settings = iced::Settings {
         id: Some(APP_ID.to_string()),
         default_text_size: APP_FONT_SIZE.into(),
@@ -56,11 +64,15 @@ pub fn run(url: Url, apps: Vec<UrlHandlerApp>) -> iced::Result {
         ..Default::default()
     };
 
-    iced::application(App::title, App::update, App::view)
-        .theme(App::theme)
-        .settings(settings)
-        .window(window)
-        .run_with(|| App::new(url, apps))
+    iced::application(
+        move || App::new(url.clone(), apps.clone(), explain),
+        App::update,
+        App::view,
+    )
+    .title(App::title)
+    .theme(App::theme)
+    .settings(settings)
+    .window(window)
 }
 
 #[cfg(target_os = "linux")]
@@ -93,12 +105,13 @@ enum Message {
 struct App {
     url: Url,
     apps: Vec<UrlHandlerApp>,
+    explain: bool,
 }
 
 impl App {
-    fn new(url: Url, apps: Vec<UrlHandlerApp>) -> (Self, Task<Message>) {
-        let chooser = Self { url, apps };
-        (chooser, Task::none())
+    fn new(url: Url, apps: Vec<UrlHandlerApp>, explain: bool) -> (Self, Task<Message>) {
+        let app = Self { url, apps, explain };
+        (app, Task::none())
     }
 
     fn title(&self) -> String {
@@ -108,7 +121,7 @@ impl App {
     fn update(&mut self, message: Message) -> Task<Message> {
         match message {
             Message::OpenWithApp(app) => match app.open_url(self.url.clone()) {
-                Ok(_) => window::get_latest().and_then(window::close),
+                Ok(_) => window::latest().and_then(window::close),
                 Err(e) => {
                     log::error!("Failed to open URL with '{}': {}", app.name, e);
                     Task::none()
@@ -163,8 +176,11 @@ impl App {
             .align_x(Alignment::Center)
             .into();
 
-        #[cfg(debug_assertions)]
-        let content = content.explain(iced::Color::WHITE);
+        let content = if self.explain {
+            content.explain(iced::Color::WHITE)
+        } else {
+            content
+        };
 
         center(content).into()
     }
@@ -175,21 +191,22 @@ impl App {
 }
 
 fn app_icon<T>(app: &UrlHandlerApp, icon_size: u16) -> Element<'_, T> {
+    let length = iced::Length::from(icon_size.to_u32());
     match app.icon_path(icon_size) {
         Some(path) if path.extension().is_some_and(|ext| ext.eq("svg")) => {
             log::trace!("Found svg icon for {}: {:?}", app.appid, path);
-            svg(path).height(icon_size).width(icon_size).into()
+            svg(path).height(length).width(length).into()
         }
         Some(path) => {
             log::trace!("Found standard icon for {}: {:?}", app.appid, path);
-            image(path).height(icon_size).width(icon_size).into()
+            image(path).height(length).width(length).into()
         }
         None => {
             log::trace!("No icon found for {}, using placeholder", app.appid);
             let handle = svg::Handle::from_memory(UNKOWN_APP_ICON_BYTES);
             svg(handle)
-                .height(icon_size)
-                .width(icon_size)
+                .height(length)
+                .width(length)
                 .style(unknown_app_icon_style)
                 .into()
         }
