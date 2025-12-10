@@ -168,7 +168,7 @@ impl App {
             .style(text::primary)
             .align_x(Alignment::Center)
             .width(Length::Fill)
-            .wrapping(text::Wrapping::None);
+            .wrapping(text::Wrapping::Glyph);
 
         let content: Element<_> = column![apps_container, url_text]
             .spacing(OUTER_SPACING)
