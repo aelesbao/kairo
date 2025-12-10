@@ -1,0 +1,23 @@
+[package]
+name = "kairo-cli"
+description.workspace = true
+version.workspace = true
+authors.workspace = true
+edition.workspace = true
+repository.workspace = true
+homepage.workspace = true
+documentation.workspace = true
+license.workspace = true
+readme.workspace = true
+categories.workspace = true
+keywords.workspace = true
+
+[dependencies]
+kairo-core = { workspace = true }
+anyhow = { workspace = true }
+clap = { workspace = true }
+clap-verbosity = { workspace = true }
+console = { workspace = true }
+dialoguer = { workspace = true }
+log = { workspace = true }
+pretty_env_logger = { workspace = true }

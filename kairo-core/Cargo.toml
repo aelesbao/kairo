@@ -1,0 +1,22 @@
+[package]
+name = "kairo-core"
+description.workspace = true
+version.workspace = true
+authors.workspace = true
+edition.workspace = true
+repository.workspace = true
+homepage.workspace = true
+documentation.workspace = true
+license.workspace = true
+readme.workspace = true
+categories.workspace = true
+keywords.workspace = true
+
+[dependencies]
+freedesktop-desktop-entry = { workspace = true }
+freedesktop-icons = { workspace = true }
+log = { workspace = true }
+mime = { workspace = true }
+shell-words = { workspace = true }
+thiserror = { workspace = true }
+url = { workspace = true }

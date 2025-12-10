@@ -4,7 +4,7 @@ use freedesktop_desktop_entry as fde;
 use mime::Mime;
 use url::Url;
 
-use crate::{Result, exec::ExecParser};
+use crate::{Error, Result, exec::ExecParser};
 
 /// Represents an application that can handle specific URL schemes.
 #[derive(Clone, Debug)]
@@ -75,6 +75,10 @@ impl UrlHandlerApp {
             apps.len(),
             scheme_handler_mime
         );
+
+        if apps.is_empty() {
+            return Err(Error::NoHandlersFound(scheme.to_string()));
+        }
 
         Ok(apps)
     }

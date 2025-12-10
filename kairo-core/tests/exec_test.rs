@@ -1,4 +1,4 @@
-use kiro::{
+use kairo_core::{
     Error,
     exec::{ExecParseError, ExecParser},
 };

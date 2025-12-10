@@ -1,18 +1,23 @@
-[package]
-name = "kiro"
+[workspace]
+members = ["kairo-core", "kairo-cli", "kairo-desktop"]
+resolver = "3"
+
+[workspace.package]
+name = "kairo"
 description = "CLI and Desktop application for smart URL routing"
 version = "0.1.0"
 authors = ["Augusto Elesbão <aelesbao@gmail.com>"]
 edition = "2024"
-repository = "https://github.com/aelesbao/kiro"
-homepage = "https://github.com/aelesbao/kiro"
-documentation = "https://docs.rs/kiro"
+repository = "https://github.com/aelesbao/kairo"
+homepage = "https://github.com/aelesbao/kairo"
+documentation = "https://docs.rs/kairo"
 license = "Apache-2.0"
 readme = "README.md"
 categories = ["command-line-utilities"]
 keywords = ["freedesktop", "desktop", "cli"]
 
-[dependencies]
+[workspace.dependencies]
+kairo-core = { path = "kairo-core" }
 anyhow = { version = "1.0.100", features = ["backtrace"] }
 clap = { version = "4.5.51", features = ["derive"] }
 clap-verbosity = "2.1.0"
