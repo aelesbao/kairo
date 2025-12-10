@@ -12,6 +12,10 @@ readme.workspace = true
 categories.workspace = true
 keywords.workspace = true
 
+[[bin]]
+name = "kairo"
+path = "src/main.rs"
+
 [dependencies]
 kairo-core = { workspace = true }
 anyhow = { workspace = true }
