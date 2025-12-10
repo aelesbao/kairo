@@ -1,5 +1,5 @@
 [workspace]
-members = ["kairo-core", "kairo-cli", "kairo-app"]
+members = ["kairo-core", "kairo-cli", "kairo-desktop"]
 resolver = "3"
 
 [workspace.package]

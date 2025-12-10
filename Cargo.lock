@@ -2176,22 +2176,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "kairo-app"
-version = "0.1.0"
-dependencies = [
- "anyhow",
- "clap",
- "clap-verbosity",
- "console",
- "dialoguer",
- "iced",
- "kairo-core",
- "log",
- "pretty_env_logger",
- "unicode-segmentation",
-]
-
-[[package]]
 name = "kairo-cli"
 version = "0.1.0"
 dependencies = [
@@ -2216,6 +2200,22 @@ dependencies = [
  "shell-words",
  "thiserror 2.0.17",
  "url",
+]
+
+[[package]]
+name = "kairo-desktop"
+version = "0.1.0"
+dependencies = [
+ "anyhow",
+ "clap",
+ "clap-verbosity",
+ "console",
+ "dialoguer",
+ "iced",
+ "kairo-core",
+ "log",
+ "pretty_env_logger",
+ "unicode-segmentation",
 ]
 
 [[package]]

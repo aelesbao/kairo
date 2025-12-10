@@ -1,5 +1,5 @@
 [package]
-name = "kairo-app"
+name = "kairo-desktop"
 description.workspace = true
 version.workspace = true
 authors.workspace = true

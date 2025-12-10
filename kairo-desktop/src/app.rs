@@ -12,6 +12,9 @@ use iced::{
 use kairo_core::{Url, UrlHandlerApp};
 use unicode_segmentation::UnicodeSegmentation;
 
+// TODO: fetch from cargo metadata
+const APP_ID: &str = "io.github.aelesbao.Kairo";
+
 #[cfg(target_os = "macos")]
 const WIN_SIZE: [f32; 2] = [640.0, 210.0];
 #[cfg(not(target_os = "macos"))]
@@ -37,11 +40,8 @@ const UNKOWN_APP_ICON_BYTES: &[u8] = include_bytes!("../assets/unknown.svg");
 pub fn run(url: Url, apps: Vec<UrlHandlerApp>) -> iced::Result {
     log::info!("Launching UI for URL handler selection");
 
-    // TODO: fetch from cargo metadata
-    let application_id = "io.github.aelesbao.Kiro".to_string();
-
     let settings = iced::Settings {
-        id: Some(application_id.clone()),
+        id: Some(APP_ID.to_string()),
         default_text_size: APP_FONT_SIZE.into(),
         ..Default::default()
     };
@@ -52,7 +52,7 @@ pub fn run(url: Url, apps: Vec<UrlHandlerApp>) -> iced::Result {
         min_size: Some(WIN_MIN_SIZE.into()),
         resizable: true,
         position: window::Position::Centered,
-        platform_specific: platform_settings(application_id),
+        platform_specific: platform_settings(APP_ID.to_string()),
         ..Default::default()
     };
 
@@ -102,7 +102,7 @@ impl App {
     }
 
     fn title(&self) -> String {
-        "Select Application to Open URL - Kiro".to_string()
+        "Select Application to Open URL - Kairo".to_string()
     }
 
     fn update(&mut self, message: Message) -> Task<Message> {
