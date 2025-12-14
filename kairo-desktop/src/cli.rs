@@ -41,7 +41,12 @@ impl Cli {
         let apps =
             UrlHandlerApp::handlers_for_scheme(self.url.scheme(), None, self.search_paths.clone())?;
 
-        app::run(self.url.clone(), apps, self.debug_ui)?;
+        #[cfg(debug_assertions)]
+        let debug_ui = self.debug_ui;
+        #[cfg(not(debug_assertions))]
+        let debug_ui = false;
+
+        app::run(self.url.clone(), apps, debug_ui)?;
 
         Ok(())
     }
