@@ -45,6 +45,9 @@ jobs:
       fail-fast: false
       matrix:
         include:
+          - target: x86_64-unknown-linux-gnu
+            os: ubuntu-latest
+            deb: false
           - target: x86_64-unknown-linux-musl
             os: ubuntu-latest
             deb: true
@@ -88,7 +91,15 @@ jobs:
           key: ${{ matrix.target }}
 
       - name: Build binary
-        run: cargo build --release --locked --target=${{ matrix.target }} $BUILD_STD
+        run: cargo build --release --locked --target=${{ matrix.target }}
+
+      - name: Package
+        run: |
+          tar -cv LICENSE README.md \
+            -C ${PWD}/kairo-desktop/ assets \
+            -C ${PWD}/target/${{ matrix.target }}/release/ kairo kairo-desktop |
+            xz -z9 > \
+            target/kairo-${{ steps.get_version.outputs.value }}-${{ matrix.target }}.tar.xz
 
       - name: Install cargo-deb
         uses: taiki-e/install-action@v2
@@ -99,23 +110,15 @@ jobs:
       - name: Build deb
         if: ${{ matrix.deb == true }}
         run: |
-          cargo deb --package kairo-cli --no-build --target=${{ matrix.target }} && \
-          cargo deb --package kairo-desktop --no-build --target=${{ matrix.target }}
-
-      - name: Package kairo-cli
-        run: |
-          tar -cv LICENSE README.md \
-            -C target/${{ matrix.target }}/release/ kairo-cli |
-            gzip --best > \
-            target/kairo-cli-${{ steps.get_version.outputs.value }}-${{ matrix.target }}.tar.gz
+          cargo deb --no-build --target=${{ matrix.target }}
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
           name: ${{ matrix.target }}
           path: |
-            target/debian/*.deb
-            target/release/*.tar.gz
+            target/${{ matrix.target }}/debian/*.deb
+            target/*.tar.gz
 
       - name: Create release
         if: github.ref_type == 'tag' || (github.event_name == 'workflow_dispatch' && github.event.inputs.release == 'true')
@@ -123,6 +126,6 @@ jobs:
         with:
           prerelease: ${{ github.ref != format('refs/tags/v{0}', steps.get_version.outputs.value) }}
           files: |
-            target/debian/*.deb
-            target/release/*.tar.gz
+            target/${{ matrix.target }}/debian/*.deb
+            target/*.tar.gz
           generate_release_notes: true
