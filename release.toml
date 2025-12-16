@@ -1,0 +1,15 @@
+# Which branches are allowed to be released from
+allow-branch = ["main"]
+
+sign-commit = true
+sign-tag = true
+
+# When releasing a workspace, use a single commit for the pre-release version bump.
+# Commit settings will be read from the workspace-config.
+consolidate-commits = true
+
+pre-release-commit-message = "chore(release): {{crate_name}} v{{version}}"
+tag-message = "chore(release): {{crate_name}} v{{version}}"
+tag-name = "{{prefix}}v{{version}}"
+
+enable-all-features = true
