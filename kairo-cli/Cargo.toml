@@ -12,10 +12,6 @@ readme.workspace = true
 categories.workspace = true
 keywords.workspace = true
 
-[[bin]]
-name = "kairo"
-path = "src/main.rs"
-
 [dependencies]
 kairo-core = { workspace = true }
 anyhow = { workspace = true }
@@ -25,10 +21,3 @@ console = { workspace = true }
 dialoguer = { workspace = true }
 log = { workspace = true }
 pretty_env_logger = { workspace = true }
-
-[package.metadata.deb]
-section = "web"
-assets = [
-  "$auto",
-  { source = "../LICENSE", dest = "usr/share/doc/kairo/LICENSE", mode = "644" },
-]

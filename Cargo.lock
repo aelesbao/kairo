@@ -2219,6 +2219,14 @@ dependencies = [
 ]
 
 [[package]]
+name = "kairo"
+version = "0.2.0"
+dependencies = [
+ "kairo-cli",
+ "kairo-desktop",
+]
+
+[[package]]
 name = "kairo-cli"
 version = "0.2.0"
 dependencies = [

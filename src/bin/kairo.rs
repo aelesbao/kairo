@@ -1,8 +1,5 @@
-mod app;
-mod cli;
-
 fn main() {
-    if let Err(e) = cli::run() {
+    if let Err(e) = kairo_cli::run() {
         eprintln!("Error: {}", e);
         std::process::exit(1);
     }

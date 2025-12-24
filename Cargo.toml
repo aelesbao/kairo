@@ -1,3 +1,24 @@
+[package]
+name = "kairo"
+description.workspace = true
+version.workspace = true
+authors.workspace = true
+edition.workspace = true
+repository.workspace = true
+homepage.workspace = true
+documentation.workspace = true
+license.workspace = true
+readme.workspace = true
+categories.workspace = true
+keywords.workspace = true
+
+# There's already an unsed crate named "kairo" on crates.io.
+publish = false
+
+[dependencies]
+kairo-cli = { path = "kairo-cli", version = "0.2.0" }
+kairo-desktop = { path = "kairo-desktop", version = "0.2.0" }
+
 [workspace]
 members = ["kairo-core", "kairo-cli", "kairo-desktop"]
 resolver = "3"
@@ -46,3 +67,20 @@ split-debuginfo = "packed"
 strip = "debuginfo"
 # Exit process with SIGABRT when any thread panics.
 panic = "abort"
+
+[package.metadata.deb]
+section = "web"
+assets = [
+  "$auto",
+  { source = "kairo-desktop/assets/*", dest = "usr/share/kairo/", mode = "644" },
+  { source = "LICENSE", dest = "usr/share/doc/kairo/LICENSE", mode = "644" },
+]
+
+[package.metadata.bundle.bin.kairo-desktop]
+name = "Kairo"
+identifier = "io.github.aelesbao.Kairo"
+icon = ["kairo-desktop/assets/icons/kairo.png"]
+category = "public.app-category.productivity"
+resources = ["kairo-desktop/assets/*", "LICENSE"]
+long_description = """Kairo routes links to the right app."""
+osx_url_schemes = ["http", "https"]

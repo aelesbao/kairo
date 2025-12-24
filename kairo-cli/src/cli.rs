@@ -41,6 +41,12 @@ impl Cli {
     }
 }
 
+impl Default for Cli {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 #[derive(Subcommand, Debug)]
 enum Commands {
     /// Lists all applications that can handle a given URL scheme.

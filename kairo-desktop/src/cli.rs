@@ -52,6 +52,12 @@ impl Cli {
     }
 }
 
+impl Default for Cli {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 pub fn run() -> anyhow::Result<()> {
     let cli = Cli::new();
     cli.run()
