@@ -66,6 +66,8 @@ impl UrlHandlerApp {
             .filter(|de| {
                 de.mime_type()
                     .is_some_and(|mime| mime.contains(&scheme_handler_mime.essence_str()))
+                    // Ignore self on the list
+                    && !de.id().eq_ignore_ascii_case("kairo")
             })
             .map(|entry| Self::from_desktop_entry(entry, &locales))
             .collect::<Vec<_>>();
