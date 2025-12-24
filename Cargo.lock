@@ -1371,9 +1371,9 @@ dependencies = [
 
 [[package]]
 name = "freedesktop-desktop-entry"
-version = "0.7.19"
+version = "0.8.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "528df05c8ed0bfd569c7018914ba1995be2a133ba9ead17628ddb0ff94b86331"
+checksum = "72fda69c9324507f8e26c4751b54c865ddcfdd63e8c8bc34992dbd86689d6bec"
 dependencies = [
  "bstr",
  "gettext-rs",
@@ -1941,9 +1941,9 @@ dependencies = [
 
 [[package]]
 name = "iced_widget"
-version = "0.14.1"
+version = "0.14.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "f86f6948998a5e031849afae1bb852f3b100c71572befa0be70b19075dcb2163"
+checksum = "b1596afa0d3109c2618e8bc12bae6c11d3064df8f95c42dfce570397dbe957ab"
 dependencies = [
  "iced_renderer",
  "log",
@@ -2216,6 +2216,14 @@ checksum = "464a3709c7f55f1f721e5389aa6ea4e3bc6aba669353300af094b29ffbdde1d8"
 dependencies = [
  "once_cell",
  "wasm-bindgen",
+]
+
+[[package]]
+name = "kairo"
+version = "0.2.0"
+dependencies = [
+ "kairo-cli",
+ "kairo-desktop",
 ]
 
 [[package]]

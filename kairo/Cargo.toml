@@ -1,0 +1,40 @@
+[package]
+name = "kairo"
+description.workspace = true
+version.workspace = true
+authors.workspace = true
+edition.workspace = true
+repository.workspace = true
+homepage.workspace = true
+documentation.workspace = true
+license.workspace = true
+readme.workspace = true
+categories.workspace = true
+keywords.workspace = true
+
+# There's already an unsed crate named "kairo" on crates.io.
+publish = false
+
+[dependencies]
+kairo-cli = { workspace = true }
+kairo-desktop = { workspace = true }
+
+[package.metadata.deb]
+section = "web"
+assets = [
+  "$auto",
+  { source = "desktop/*", dest = "usr/share/applications/", mode = "644" },
+  { source = "icons/kairo.png", dest = "usr/share/icons/hicolor/256x256/apps/kairo.png", mode = "644" },
+  { source = "icons/kairo.svg", dest = "usr/share/icons/hicolor/scalable/apps/kairo.png", mode = "644" },
+  { source = "../LICENSE", dest = "usr/share/doc/kairo/LICENSE", mode = "644" },
+  { source = "../README.md", dest = "usr/share/doc/kairo/README.md", mode = "644" },
+]
+
+[package.metadata.bundle.bin.kairo-desktop]
+name = "Kairo"
+identifier = "io.github.aelesbao.Kairo"
+icon = ["icons/kairo.png"]
+category = "public.app-category.productivity"
+resources = ["../LICENSE", "../README.md"]
+long_description = """Kairo routes links to the right app."""
+osx_url_schemes = ["http", "https"]
