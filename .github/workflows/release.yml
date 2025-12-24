@@ -96,7 +96,7 @@ jobs:
       - name: Package
         run: |
           tar -cv LICENSE README.md \
-            -C ${PWD}/kairo-desktop/ assets \
+            -C ${PWD}/kairo/ desktop icons \
             -C ${PWD}/target/${{ matrix.target }}/release/ kairo kairo-desktop |
             xz -z9 > \
             target/kairo-${{ steps.get_version.outputs.value }}-${{ matrix.target }}.tar.xz

@@ -36,7 +36,7 @@ const BORDER_RADIUS: f32 = 10.0;
 
 const ICON_SIZE: u16 = 64;
 
-const UNKOWN_APP_ICON_BYTES: &[u8] = include_bytes!("../assets/share/unknown.svg");
+const UNKOWN_APP_ICON_BYTES: &[u8] = include_bytes!("../assets/unknown.svg");
 
 pub fn run(url: Url, apps: Vec<UrlHandlerApp>, explain: bool) -> iced::Result {
     log::info!("Launching UI for URL handler selection");
