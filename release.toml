@@ -8,8 +8,11 @@ sign-tag = true
 # Commit settings will be read from the workspace-config.
 consolidate-commits = true
 
-pre-release-commit-message = "chore(release): {{crate_name}} v{{version}}"
-tag-message = "chore(release): {{crate_name}} v{{version}}"
-tag-name = "{{prefix}}v{{version}}"
+pre-release-commit-message = "chore(release): v{{version}}"
+tag-message = "chore(release): v{{version}}"
+tag-name = "v{{version}}"
 
 enable-all-features = true
+
+# Publish manually to crates.io
+publish = false
