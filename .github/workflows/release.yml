@@ -38,7 +38,7 @@ env:
   CLICOLOR: 1
 
 jobs:
-  cli:
+  package:
     name: ${{ matrix.target }}
     runs-on: ${{ matrix.os }}
     strategy:
