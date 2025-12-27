@@ -28,11 +28,7 @@ impl Cli {
 
     pub fn run(&self) -> anyhow::Result<()> {
         pretty_env_logger::formatted_builder()
-            .filter_level(log::LevelFilter::Info)
-            .filter(
-                Some(env!("CARGO_CRATE_NAME")),
-                self.verbose.log_level_filter(),
-            )
+            .filter_level(self.verbose.log_level_filter())
             .init();
 
         self.command.process()?;
