@@ -2217,7 +2217,6 @@ dependencies = [
 name = "kairo-cli"
 version = "0.3.1"
 dependencies = [
- "anyhow",
  "clap",
  "clap-verbosity",
  "console",

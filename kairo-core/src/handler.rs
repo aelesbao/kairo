@@ -18,22 +18,23 @@ pub struct UrlHandlerApp {
 
 impl UrlHandlerApp {
     /// Opens the given URL with this application.
-    pub fn open_url(&self, url: Url) -> Result<u32> {
-        log::info!(
-            "Opening URL '{}' with application '{}'",
-            url,
-            self.path.display()
-        );
+    pub fn open_url(&self, url: Url) -> Result<()> {
+        log::info!("Opening URL with {}: {url}", self.appid);
 
         let locales = fde::get_languages_from_env();
         let de = fde::DesktopEntry::from_path(self.path.clone(), Some(&locales))?;
 
         let (cmd, args) = ExecParser::new(&de, &locales).parse_with_uris(&[url.as_str()])?;
-        log::debug!("Executing command: '{}' with args: {:?}", cmd, args);
+        log::debug!("Executing command: '{cmd}' with args: {args:?}");
 
-        let program = Command::new(cmd).args(args).spawn()?;
+        let mut program = Command::new(cmd).args(args).spawn()?;
+        let status = program.wait()?;
 
-        Ok(program.id())
+        if !status.success() {
+            return Err(Error::OpenUrl(self.appid.clone(), status));
+        }
+
+        Ok(())
     }
 
     /// Retrieves all applications that can handle the specified URL scheme.
@@ -52,13 +53,11 @@ impl UrlHandlerApp {
         let search_paths = search_paths.unwrap_or_else(|| fde::default_paths().collect());
 
         log::debug!(
-            "Searching for applications handling scheme '{}' in paths: {:?}",
-            scheme,
-            search_paths
+            "Searching for applications handling scheme '{scheme}' in paths: {search_paths:?}"
         );
 
         let entries = fde::Iter::new(search_paths.into_iter()).entries(Some(&locales));
-        let scheme_handler_mime = format!("x-scheme-handler/{}", scheme)
+        let scheme_handler_mime = format!("x-scheme-handler/{scheme}")
             .as_str()
             .parse::<Mime>()?;
 
@@ -73,9 +72,8 @@ impl UrlHandlerApp {
             .collect::<Vec<_>>();
 
         log::info!(
-            "Found {} applications with support for '{}'",
+            "Found {} applications with support for '{scheme_handler_mime}'",
             apps.len(),
-            scheme_handler_mime
         );
 
         if apps.is_empty() {

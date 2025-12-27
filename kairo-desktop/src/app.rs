@@ -121,10 +121,15 @@ impl App {
     fn update(&mut self, message: Message) -> Task<Message> {
         match message {
             Message::OpenWithApp(app) => match app.open_url(self.url.clone()) {
-                Ok(_) => window::latest().and_then(window::close),
+                Ok(_) => iced::exit(),
                 Err(e) => {
+                    // TODO: display error message on UI
                     log::error!("Failed to open URL with '{}': {}", app.name, e);
-                    Task::none()
+                    let code = match e {
+                        kairo_core::Error::OpenUrl(_, status) => status.code(),
+                        _ => None,
+                    };
+                    std::process::exit(code.unwrap_or(1));
                 }
             },
         }
