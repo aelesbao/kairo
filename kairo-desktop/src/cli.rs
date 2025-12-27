@@ -16,7 +16,7 @@ pub struct Cli {
     search_paths: Option<Vec<std::path::PathBuf>>,
 
     #[command(flatten)]
-    verbose: clap_verbosity::Verbosity<clap_verbosity::WarnLevel>,
+    verbose: clap_verbosity::Verbosity<clap_verbosity::InfoLevel>,
 
     /// Enable UI debug mode to explain the elements layout.
     #[cfg(debug_assertions)]
@@ -31,11 +31,7 @@ impl Cli {
 
     pub fn run(&self) -> anyhow::Result<()> {
         pretty_env_logger::formatted_builder()
-            .filter_level(log::LevelFilter::Info)
-            .filter(
-                Some(env!("CARGO_CRATE_NAME")),
-                self.verbose.log_level_filter(),
-            )
+            .filter_level(self.verbose.log_level_filter())
             .init();
 
         let apps =
