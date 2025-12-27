@@ -4,7 +4,7 @@ resolver = "3"
 
 [workspace.package]
 description = "CLI and Desktop application for smart URL routing"
-version = "0.3.1"
+version = "0.3.2"
 authors = ["Augusto Elesbão <aelesbao@gmail.com>"]
 edition = "2024"
 repository = "https://github.com/aelesbao/kairo"
@@ -16,9 +16,9 @@ categories = ["command-line-utilities"]
 keywords = ["freedesktop", "desktop", "cli"]
 
 [workspace.dependencies]
-kairo-core = { path = "kairo-core", version = "0.3.1" }
-kairo-cli = { path = "kairo-cli", version = "0.3.1" }
-kairo-desktop = { path = "kairo-desktop", version = "0.3.1" }
+kairo-core = { path = "kairo-core", version = "0.3.2" }
+kairo-cli = { path = "kairo-cli", version = "0.3.2" }
+kairo-desktop = { path = "kairo-desktop", version = "0.3.2" }
 
 anyhow = { version = "1.0.100", features = ["backtrace"] }
 clap = { version = "4.5.51", features = ["derive"] }
