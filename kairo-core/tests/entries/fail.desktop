@@ -1,0 +1,7 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Exec=sh -c 'exit 127'
+Terminal=false
+MimeType=x-scheme-handler/exit;
+Name=Exits with an error code

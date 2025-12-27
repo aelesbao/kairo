@@ -17,6 +17,15 @@ where
 }
 
 #[allow(dead_code)]
+pub fn fail_exec_de<L>(locales: Option<&[L]>) -> fde::DesktopEntry
+where
+    L: AsRef<str>,
+{
+    let path = entries_path().join("fail.desktop");
+    fde::DesktopEntry::from_path(path, locales).unwrap()
+}
+
+#[allow(dead_code)]
 pub fn missing_exec_de<L>(locales: Option<&[L]>) -> fde::DesktopEntry
 where
     L: AsRef<str>,

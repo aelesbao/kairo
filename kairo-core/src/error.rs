@@ -3,6 +3,9 @@ pub enum Error {
     #[error("no handlers found for URL scheme: {0}")]
     NoHandlersFound(String),
 
+    #[error("failed to execute application {0}: {1}")]
+    OpenUrl(String, std::process::ExitStatus),
+
     #[error("I/O error: {0}")]
     Io(#[from] std::io::Error),
 
