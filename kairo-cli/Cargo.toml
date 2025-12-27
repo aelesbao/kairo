@@ -14,7 +14,6 @@ keywords.workspace = true
 
 [dependencies]
 kairo-core = { workspace = true }
-anyhow = { workspace = true }
 clap = { workspace = true }
 clap-verbosity = { workspace = true }
 console = { workspace = true }

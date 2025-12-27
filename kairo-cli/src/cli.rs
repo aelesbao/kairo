@@ -3,7 +3,7 @@ use std::path::PathBuf;
 use clap::{Parser, Subcommand};
 use console::style;
 use dialoguer::{Select, theme::ColorfulTheme};
-use kairo_core::{Url, UrlHandlerApp};
+use kairo_core::{Result, Url, UrlHandlerApp};
 
 /// Kairo
 #[derive(Parser, Debug)]
@@ -26,14 +26,12 @@ impl Cli {
         Cli::parse()
     }
 
-    pub fn run(&self) -> anyhow::Result<()> {
+    pub fn run(&self) -> Result<()> {
         pretty_env_logger::formatted_builder()
             .filter_level(self.verbose.log_level_filter())
             .init();
 
-        self.command.process()?;
-
-        Ok(())
+        self.command.process()
     }
 }
 
@@ -73,7 +71,7 @@ enum Commands {
 }
 
 impl Commands {
-    fn process(&self) -> kairo_core::Result<()> {
+    fn process(&self) -> Result<()> {
         match self {
             Commands::List { url, scheme } => Self::list(url.clone(), scheme.clone(), None),
             Commands::Open { url, no_prompt } => Self::open(url.clone(), None, *no_prompt),
@@ -84,7 +82,7 @@ impl Commands {
         url: Option<Url>,
         scheme: Option<String>,
         search_paths: Option<Vec<PathBuf>>,
-    ) -> kairo_core::Result<()> {
+    ) -> Result<()> {
         let scheme = match (url, scheme) {
             (Some(url), _) => url.scheme().to_string(),
             (_, Some(scheme)) => scheme,
@@ -105,16 +103,11 @@ impl Commands {
         Ok(())
     }
 
-    fn open(
-        url: Url,
-        search_paths: Option<Vec<PathBuf>>,
-        no_prompt: bool,
-    ) -> kairo_core::Result<()> {
+    fn open(url: Url, search_paths: Option<Vec<PathBuf>>, no_prompt: bool) -> Result<()> {
         let apps = UrlHandlerApp::handlers_for_scheme(url.scheme(), None, search_paths)?;
 
         if no_prompt || apps.len() == 1 {
-            Self::open_with_app(&apps[0], url)?;
-            return Ok(());
+            return Self::open_with_app(&apps[0], url);
         }
 
         let app_names: Vec<String> = apps
@@ -122,7 +115,7 @@ impl Commands {
             .map(|app| format!("{:<16} {}", app.appid, app.name))
             .collect();
         let selection = Select::with_theme(&ColorfulTheme::default())
-        .with_prompt("Select an application to open the URL with")
+        .with_prompt("Select an application to open the URL with (press ESC or q to cancel)")
         .report(false)
         // TODO: save the last used app as default
         .default(0)
@@ -131,19 +124,19 @@ impl Commands {
         .unwrap();
 
         if let Some(selection) = selection {
-            Self::open_with_app(&apps[selection], url)?;
+            return Self::open_with_app(&apps[selection], url);
         }
 
         Ok(())
     }
 
-    fn open_with_app(app: &UrlHandlerApp, url: Url) -> kairo_core::Result<u32> {
+    fn open_with_app(app: &UrlHandlerApp, url: Url) -> Result<()> {
         println!("Opening URL with {}...", style(&app.name).bold().green());
         app.open_url(url)
     }
 }
 
-pub fn run() -> anyhow::Result<()> {
+pub fn run() -> Result<()> {
     let cli = Cli::new();
     cli.run()
 }
