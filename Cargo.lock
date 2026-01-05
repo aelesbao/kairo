@@ -2207,7 +2207,7 @@ dependencies = [
 
 [[package]]
 name = "kairo"
-version = "0.3.2"
+version = "0.3.3"
 dependencies = [
  "kairo-cli",
  "kairo-desktop",
@@ -2215,7 +2215,7 @@ dependencies = [
 
 [[package]]
 name = "kairo-cli"
-version = "0.3.2"
+version = "0.3.3"
 dependencies = [
  "clap",
  "clap-verbosity",
@@ -2228,7 +2228,7 @@ dependencies = [
 
 [[package]]
 name = "kairo-core"
-version = "0.3.2"
+version = "0.3.3"
 dependencies = [
  "freedesktop-desktop-entry",
  "freedesktop-icons",
@@ -2241,7 +2241,7 @@ dependencies = [
 
 [[package]]
 name = "kairo-desktop"
-version = "0.3.2"
+version = "0.3.3"
 dependencies = [
  "anyhow",
  "clap",
