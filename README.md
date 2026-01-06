@@ -8,6 +8,32 @@ For power users, Kairo includes a CLI that provides the same features without le
 
 Kairo aims to be platform-independent, working across different desktop environments such as GNOME, KDE, Hyprland, and more. It currently supports Linux, with macOS support planned for upcoming releases.
 
+## Installation
+
+### Arch Linux
+
+Use one of the official AUR packages:
+
+- `kairo` if you prefer to build from source
+- `kairo-bin` if you prefer to install the pre-built binaries
+
+```bash
+yay -S kairo
+```
+
+### Debian / Ubuntu
+
+Download and install the provided `.deb` package in the [latest release](https://github.com/aelesbao/kairo/releases/latest).
+
+## Set it as the default browser
+
+Use the following command to set `kairo` as your default URL handler:
+
+```bash
+xdg-mime default kairo.desktop x-scheme-handler/http
+xdg-mime default kairo.desktop x-scheme-handler/https
+```
+
 ## References
 
 This project was inspired by [Junction](https://junction.sonny.re/). I tried it for a while on GNOME and liked the way it worked. However, I couldn’t find a similar tool that worked across other environments, so I decided to build one that would be portable, modern, and accessible to Linux and macOS users. Kairo is still a work in progress, but is growing toward that goal.
