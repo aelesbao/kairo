@@ -14,8 +14,8 @@ Kairo aims to be platform-independent, working across different desktop environm
 
 Use one of the official AUR packages:
 
-- `kairo` if you prefer to build from source
-- `kairo-bin` if you prefer to install the pre-built binaries
+- [kairo](https://aur.archlinux.org/packages/kairo) if you prefer to build from source
+- [kairo-bin](https://aur.archlinux.org/packages/kairo-bin) if you prefer to install the pre-built binaries
 
 ```bash
 yay -S kairo
