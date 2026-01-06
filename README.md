@@ -34,6 +34,19 @@ xdg-mime default kairo.desktop x-scheme-handler/http
 xdg-mime default kairo.desktop x-scheme-handler/https
 ```
 
+## Use it in `tmux`
+
+You can integrate the `kairo` CLI interface with the [tmux-fzf-url](https://github.com/wfxr/tmux-fzf-url) plugin:
+
+```tmux
+# Quickly open urls using fzf
+set -g @plugin 'wfxr/tmux-fzf-url'
+# Open tmux-fzf-url in a popup
+set -g @fzf-url-fzf-options '--tmux center,50%,50% --multi --exit-0 --no-preview --no-border'
+# Open using kairo
+set -g @fzf-url-open 'tmux display-popup -E kairo open'
+```
+
 ## References
 
 This project was inspired by [Junction](https://junction.sonny.re/). I tried it for a while on GNOME and liked the way it worked. However, I couldn’t find a similar tool that worked across other environments, so I decided to build one that would be portable, modern, and accessible to Linux and macOS users. Kairo is still a work in progress, but is growing toward that goal.
