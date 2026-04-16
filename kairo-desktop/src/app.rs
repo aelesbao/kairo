@@ -136,7 +136,7 @@ impl App {
     }
 
     fn view(&self) -> Element<'_, Message> {
-        log::info!("Rendering URL handler selection UI");
+        log::debug!("Rendering URL handler selection UI");
 
         let apps_buttons = self.apps.iter().map(|app| {
             let app_icon = app_icon(app, ICON_SIZE);
